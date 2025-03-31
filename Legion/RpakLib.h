@@ -326,6 +326,7 @@ enum class AssetType_t : uint32_t
 	RUI = 'iu', // ui - 0x75690000
 	Map = 'pamr', // rmap - 0x70616D72
 	Effect = 'tcfe', // efct - 0x74636665
+	Localization = 'lcol', // locl - 0x6C636F6C
 };
 
 enum class ModelExportFormat_t
@@ -461,6 +462,7 @@ public:
 	void ExportAnimationSeq(const RpakLoadAsset& Asset, const string& Path);
 	void ExportDataTable(const RpakLoadAsset& Asset, const string& Path);
 	void ExportSubtitles(const RpakLoadAsset& Asset, const string& Path);
+	void ExportLocalization(const RpakLoadAsset& Asset, const string& Path);
 	void ExportShaderSet(const RpakLoadAsset& Asset, const string& Path);
 	void ExportUIImageAtlas(const RpakLoadAsset& Asset, const string& Path);
 	void ExportSettings(const RpakLoadAsset& Asset, const string& Path);
@@ -510,6 +512,7 @@ private:
 	void BuildUIIAInfo(const RpakLoadAsset& Asset, ApexAsset& Info);
 	void BuildDataTableInfo(const RpakLoadAsset& Asset, ApexAsset& Info);
 	void BuildSubtitleInfo(const RpakLoadAsset& Asset, ApexAsset& Info);
+	void BuildLocalizationInfo(const RpakLoadAsset& Asset, ApexAsset& Info);
 	void BuildShaderSetInfo(const RpakLoadAsset& Asset, ApexAsset& Info);
 	void BuildUIImageAtlasInfo(const RpakLoadAsset& Asset, ApexAsset& Info);
 	void BuildSettingsInfo(const RpakLoadAsset& Asset, ApexAsset& Info);
@@ -533,6 +536,7 @@ private:
 	List<Assets::Bone> ExtractSkeleton_V16(IO::BinaryReader& Reader, uint64_t SkeletonOffset, uint32_t Version, int mdlHeaderSize=0);
 	//List<List<DataTableColumnData>> ExtractDataTable(const RpakLoadAsset& Asset);
 	List<SubtitleEntry> ExtractSubtitles(const RpakLoadAsset& Asset);
+	List<LocalizationEntry> ExtractLocalization(const RpakLoadAsset& Asset);
 	void ExtractShader(const RpakLoadAsset& Asset, const string& OutputDirPath, const string& Path);
 	ShaderSetHeader ExtractShaderSet(const RpakLoadAsset& Asset);
 	void ExtractUIImageAtlas(const RpakLoadAsset& Asset, const string& Path);

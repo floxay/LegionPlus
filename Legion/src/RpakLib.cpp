@@ -239,6 +239,9 @@ std::unique_ptr<List<ApexAsset>> RpakLib::BuildAssetList(const std::array<bool, 
 		case (uint32_t)AssetType_t::Subtitles:
 			BuildSubtitleInfo(Asset, NewAsset);
 			break;
+		case (uint32_t)AssetType_t::Localization:
+			BuildLocalizationInfo(Asset, NewAsset);
+			break;
 		case (uint32_t)AssetType_t::Map:
 			BuildMapInfo(Asset, NewAsset);
 			break;
@@ -657,6 +660,7 @@ bool RpakLib::ValidateAssetPatchStatus(const RpakLoadAsset& Asset)
 		case (uint32_t)AssetType_t::Shader:
 		case (uint32_t)AssetType_t::ShaderSet:
 		case (uint32_t)AssetType_t::Subtitles:
+		case (uint32_t)AssetType_t::Localization:
 		case (uint32_t)AssetType_t::Settings:
 		case (uint32_t)AssetType_t::SettingsLayout:
 		case (uint32_t)AssetType_t::RSON:
