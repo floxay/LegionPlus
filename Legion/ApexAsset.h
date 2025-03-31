@@ -21,6 +21,7 @@ enum class ApexAssetType
 	RUI,
 	Map,
 	Effect,
+	Localization,
 };
 
 enum class ApexAssetStatus

@@ -240,6 +240,34 @@ struct SubtitleEntry
 	string SubtitleText;
 };
 
+struct LocalizationHeader
+{
+	char padding[0x8];
+
+	uint32_t ValueCount;
+	uint32_t unk1;
+	uint32_t KeyCount;
+	uint32_t unk2;
+	uint32_t KeyEntriesIndex;
+	uint32_t KeyEntriesOffset;
+	uint32_t ValueEntriesIndex;
+	uint32_t ValueEntriesOffset;
+};
+
+struct LocalizationEntryMeta
+{
+	uint64_t Hash;
+	uint32_t OffsetHalf;
+	uint32_t unk1;
+};
+
+struct LocalizationEntry
+{
+	uint64_t Hash;
+	string Text;
+	uint32_t unk1;
+};
+
 // settings structs are only tested on season 3 for now
 enum class SettingsFieldType : uint16_t
 {
