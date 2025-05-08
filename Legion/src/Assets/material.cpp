@@ -101,14 +101,20 @@ void RpakLib::ExportMatCPUAsStruct(const RpakLoadAsset& Asset, MaterialHeader& M
 
 	uint64_t PixelShaderGuid = ShaderSetHeader.PixelShaderHash;
 
-	if (ShaderSetAsset.AssetVersion == 12)
-		PixelShaderGuid = ShaderSetHeader.Old12PixelShaderHash;
 
-	if (ShaderSetAsset.AssetVersion <= 11)
-		PixelShaderGuid = ShaderSetHeader.OldPixelShaderHash;
-
-	if (ShaderSetAsset.AssetVersion == 8)
+	if (ShaderSetAsset.AssetVersion == 8) {
 		PixelShaderGuid = ShaderSetHeader.PixelShaderHashTF;
+	}
+	else if (ShaderSetAsset.AssetVersion <= 11) {
+		PixelShaderGuid = ShaderSetHeader.OldPixelShaderHash;
+	}
+	else if (
+		ShaderSetAsset.AssetVersion == 12 ||
+		(ShaderSetAsset.AssetVersion == 13 && ShaderSetHeader.Old12PixelShaderHash)
+		)
+	{
+		PixelShaderGuid = ShaderSetHeader.Old12PixelShaderHash;
+	}
 
 	if (!Assets.ContainsKey(PixelShaderGuid)) // no pixel shader
 		return;
@@ -297,13 +303,15 @@ RMdlMaterial RpakLib::ExtractMaterial(const RpakLoadAsset& Asset, const string& 
 
 		uint64_t PixelShaderGuid = ShaderSetHeader.PixelShaderHash;
 
-		if (ShaderSetAsset.AssetVersion == 12)
-		{
-			PixelShaderGuid = ShaderSetHeader.Old12PixelShaderHash;
-		}
 		if (ShaderSetAsset.AssetVersion <= 11)
 		{
 			PixelShaderGuid = ShaderSetHeader.OldPixelShaderHash;
+		}
+		else if (ShaderSetAsset.AssetVersion == 12 ||
+			(ShaderSetAsset.AssetVersion == 13 && ShaderSetHeader.Old12PixelShaderHash)
+			)
+		{
+			PixelShaderGuid = ShaderSetHeader.Old12PixelShaderHash;
 		}
 
 		if (ShaderSetHeader.NameIndex || ShaderSetHeader.NameOffset)
