@@ -41,7 +41,8 @@ void RpakLib::BuildMaterialInfo(const RpakLoadAsset& Asset, ApexAsset& Info)
 		}
 		else hdr = Reader.Read<MaterialHeader>();
 
-		Info.DebugInfo = string::Format("type: %s", s_MaterialTypes[hdr.materialType]);
+		if (hdr.materialType < std::size(s_MaterialTypes))
+			Info.DebugInfo = string::Format("type: %s", s_MaterialTypes[hdr.materialType]);
 
 	}
 	else
