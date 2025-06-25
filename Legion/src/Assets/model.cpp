@@ -188,7 +188,12 @@ std::unique_ptr<Assets::Model> RpakLib::ExtractModel_V16(const RpakLoadAsset& As
 		rmdlOut.close();
 	}
 
-	Model->Bones = std::move(ExtractSkeleton_V16(Reader, StudioOffset, Asset.AssetVersion, Asset.SubHeaderSize));
+	if (Asset.AssetVersion < 19) {
+		Model->Bones = std::move(ExtractSkeleton_V16(Reader, StudioOffset, Asset.AssetVersion, Asset.SubHeaderSize));
+	}
+	else {
+		Model->Bones = std::move(ExtractSkeleton_V19(Reader, StudioOffset, Asset.AssetVersion, Asset.SubHeaderSize));
+	}
 
 	if (!bExportingRawRMdl)
 		Model->GenerateGlobalTransforms(true, true); // We need global transforms
@@ -1871,6 +1876,51 @@ List<Assets::Bone> RpakLib::ExtractSkeleton_V16(IO::BinaryReader& Reader, uint64
 		//printf("%s %i %.3f %.3f %.3f\n", boneName.ToCString(), boneData.parent, boneData.pos.X, boneData.pos.Y, boneData.pos.Z);
 
 		Result.EmplaceBack(boneName, boneData.parent, boneData.pos, boneData.quat);
+	}
+
+	if (studiohdr.numbones == 1)
+		Result[0].SetParent(-1);
+
+	return Result;
+}
+
+List<Assets::Bone> RpakLib::ExtractSkeleton_V19(IO::BinaryReader& Reader, uint64_t baseOffset, uint32_t Version, int mdlHeaderSize)
+{
+	IO::Stream* RpakStream = Reader.GetBaseStream();
+
+	RpakStream->SetPosition(baseOffset);
+
+	studiohdr_t_v16 studiohdr = Reader.Read<studiohdr_t_v16>();
+
+	List<Assets::Bone> Result = List<Assets::Bone>(studiohdr.numbones);
+
+	RpakStream->SetPosition(baseOffset + studiohdr.linearboneindex);
+	auto boneArraysHeader = Reader.Read<BoneArraysHeader>();
+	auto boneArrays = BoneArrays(boneArraysHeader.boneCount);
+
+	RpakStream->SetPosition(baseOffset + studiohdr.linearboneindex + boneArraysHeader.flagArrayOffset);
+	Reader.Read(boneArrays.flagArray.data(), 0, boneArraysHeader.boneCount * sizeof(typename decltype(BoneArrays::flagArray)::value_type));
+
+	RpakStream->SetPosition(baseOffset + studiohdr.linearboneindex + boneArraysHeader.parentIndexArrayOffset);
+	Reader.Read(boneArrays.parentIndexArray.data(), 0, boneArraysHeader.boneCount * sizeof(typename decltype(BoneArrays::parentIndexArray)::value_type));
+
+	RpakStream->SetPosition(baseOffset + studiohdr.linearboneindex + boneArraysHeader.posArrayOffset);
+	Reader.Read(boneArrays.posArray.data(), 0, boneArraysHeader.boneCount * sizeof(typename decltype(BoneArrays::posArray)::value_type));
+
+	RpakStream->SetPosition(baseOffset + studiohdr.linearboneindex + boneArraysHeader.rotArrayOffset);
+	Reader.Read(boneArrays.rotArray.data(), 0, boneArraysHeader.boneCount * sizeof(typename decltype(BoneArrays::rotArray)::value_type));
+
+	for (uint32_t i = 0; i < studiohdr.numbones; i++)
+	{
+		uint64_t Position = baseOffset + studiohdr.boneindex + (i * (sizeof(mstudiobone_t_v16)));
+		
+		RpakStream->SetPosition(Position);
+		mstudiobone_t_v16 bone = Reader.Read<mstudiobone_t_v16>();
+
+		RpakStream->SetPosition(Position + bone.sznameindex);
+		string boneName = Reader.ReadCString();
+
+		Result.EmplaceBack(boneName, boneArrays.parentIndexArray[i], boneArrays.posArray[i], boneArrays.rotArray[i]);
 	}
 
 	if (studiohdr.numbones == 1)

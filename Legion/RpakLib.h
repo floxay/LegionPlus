@@ -534,6 +534,7 @@ private:
 	void ExtractAnimation(const RpakLoadAsset& Asset, const List<Assets::Bone>& Skeleton, const string& Path);
 	List<Assets::Bone> ExtractSkeleton(IO::BinaryReader& Reader, uint64_t SkeletonOffset, uint32_t Version, int mdlHeaderSize = 0);
 	List<Assets::Bone> ExtractSkeleton_V16(IO::BinaryReader& Reader, uint64_t SkeletonOffset, uint32_t Version, int mdlHeaderSize=0);
+	List<Assets::Bone> ExtractSkeleton_V19(IO::BinaryReader& Reader, uint64_t SkeletonOffset, uint32_t Version, int mdlHeaderSize=0);
 	//List<List<DataTableColumnData>> ExtractDataTable(const RpakLoadAsset& Asset);
 	List<SubtitleEntry> ExtractSubtitles(const RpakLoadAsset& Asset);
 	List<LocalizationEntry> ExtractLocalization(const RpakLoadAsset& Asset);

@@ -663,6 +663,36 @@ struct mstudiobonedata_t_v16
 	uint16 procindex; // procedural rule
 };
 
+struct BoneArraysHeader
+{
+	short boneCount;
+
+	short flagArrayOffset;
+	short parentIndexArrayOffset;
+	short posArrayOffset;
+	short rotArrayOffset;
+	short unk1ArrayOffset;
+	short unk2ArrayOffset;
+	short unk3ArrayOffset;
+	short unk4ArrayOffset;
+};
+
+struct BoneArrays
+{
+	std::vector<int> flagArray;
+	std::vector<short> parentIndexArray;
+	std::vector<Vector3> posArray;
+	std::vector<Quaternion> rotArray;
+	// idc about the rest for now
+
+	BoneArrays(size_t size) :
+		flagArray(size),
+		parentIndexArray(size),
+		posArray(size),
+		rotArray(size)
+	{}
+};
+
 struct mstudiomodelv54_t
 {
 	char name[64];
